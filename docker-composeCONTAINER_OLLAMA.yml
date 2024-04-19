@@ -1,5 +1,13 @@
 version: "3.8"
 services:
+  ollama:
+    image: ollama/ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - $HOME/.ollama:/root/.ollama
+      - .:/opt
+    restart: always
   open_webui:
     image: ghcr.io/open-webui/open-webui
     ports:
@@ -7,13 +15,15 @@ services:
     volumes:
       - ./open_webui:/app/backend/data
     restart: always
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+    environment:
+      OLLAMA_BASE_URL: http://ollama:11434
   pull_images:
     image: curlimages/curl
     volumes:
       - .:/opt
     command: "/opt/pull_models.sh"
+    depends_on:
+      - ollama
   scrape_content:
     image: python:3
     volumes:

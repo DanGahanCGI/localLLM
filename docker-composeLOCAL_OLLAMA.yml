@@ -7,13 +7,13 @@ services:
     volumes:
       - ./open_webui:/app/backend/data
     restart: always
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
   pull_images:
     image: curlimages/curl
     volumes:
       - .:/opt
     command: "/opt/pull_models.sh"
+    depends_on:
+      - ollama
   scrape_content:
     image: python:3
     volumes:
